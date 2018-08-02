@@ -1,24 +1,26 @@
 import os
+import io
 import csv
+import json
 from validators.url import url
 
 filename = "hotels.csv"
 
 
 def is_valid_name(name):
-    if isinstance(name[0], str):
+    if isinstance(name.get('name'), str):
         return True
     return False
 
 
 def is_valid_url(uri):
-    if url(uri[5]):
+    if url(uri.get('uri')):
         return True
     return False
 
 
 def is_valid_stars(star):
-    if 0 <= int(star[2]) <= 5:
+    if 0 <= int(star.get('stars')) <= 5:
         return True
     return False
 
@@ -28,12 +30,26 @@ def validate_fields(line):
         return True
     return False
 
+def convert_row(row):
+    return f"""<hotel>
+        <name>{row.get('name')}</name>
+        <address>{row.get('address')}</address>
+        <stars>{row.get('stars')}</stars>
+        <phone>{row.get('phone')}</phone>
+        <uri>{row.get('uri')}</uri>
+    </hotel>"""
 
-with open(filename, 'r') as csv_file:
+    # print '\n'.join(df.apply(convert_row, axis=1))
+
+
+
+with open(filename) as csv_file:
     csv_reader = csv.DictReader(csv_file)
 
     next(csv_reader)
     for line in csv_reader:
-    #     if line and validate_fields(line):
-        print(line.get('name'))
-        break
+        if line and validate_fields(line):
+            rows = list(csv_reader)
+
+with io.open('test.json', 'w', encoding='utf8') as f:
+    json.dump(rows, f, ensure_ascii=False)
