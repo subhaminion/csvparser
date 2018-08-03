@@ -1,4 +1,3 @@
-import os
 import io
 import csv
 import json
@@ -30,6 +29,7 @@ def validate_fields(line):
         return True
     return False
 
+
 def convert_row(row):
     return f"""<hotel>
         <name>{row.get('name')}</name>
@@ -37,19 +37,23 @@ def convert_row(row):
         <stars>{row.get('stars')}</stars>
         <phone>{row.get('phone')}</phone>
         <uri>{row.get('uri')}</uri>
-    </hotel>"""
-
-    # print '\n'.join(df.apply(convert_row, axis=1))
-
+    </hotel>\n"""
 
 
 with open(filename) as csv_file:
     csv_reader = csv.DictReader(csv_file)
+    rows = list()
 
     next(csv_reader)
     for line in csv_reader:
         if line and validate_fields(line):
-            rows = list(csv_reader)
+            rows.append(line)
 
 with io.open('test.json', 'w', encoding='utf8') as f:
     json.dump(rows, f, ensure_ascii=False)
+
+with io.open('test.xml', 'w') as f:
+    f.write('<hotelListings>')
+    for line in rows:
+        f.write(convert_row(line))
+    f.write('</hotelListings>')
