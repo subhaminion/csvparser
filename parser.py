@@ -30,7 +30,7 @@ def validate_fields(line):
     return False
 
 
-def convert_row(row):
+def convert_row_to_xml(row):
     return f"""<hotel>
         <name>{row.get('name')}</name>
         <address>{row.get('address')}</address>
@@ -38,6 +38,19 @@ def convert_row(row):
         <phone>{row.get('phone')}</phone>
         <uri>{row.get('uri')}</uri>
     </hotel>\n"""
+
+
+def generate_json_file(rows):
+    with io.open('hotels.json', 'w', encoding='utf8') as f:
+        json.dump(rows, f, ensure_ascii=False)
+
+
+def generate_xml_file(rows):
+    with io.open('hotels.xml', 'w') as f:
+        f.write('<hotelListings>')
+        for line in rows:
+            f.write(convert_row_to_xml(line))
+        f.write('</hotelListings>')
 
 
 with open(filename) as csv_file:
@@ -49,11 +62,5 @@ with open(filename) as csv_file:
         if line and validate_fields(line):
             rows.append(line)
 
-with io.open('test.json', 'w', encoding='utf8') as f:
-    json.dump(rows, f, ensure_ascii=False)
-
-with io.open('test.xml', 'w') as f:
-    f.write('<hotelListings>')
-    for line in rows:
-        f.write(convert_row(line))
-    f.write('</hotelListings>')
+    generate_json_file(rows)
+    generate_xml_file(rows)
