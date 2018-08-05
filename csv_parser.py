@@ -53,14 +53,22 @@ def generate_xml_file(rows):
         f.write('</hotelListings>')
 
 
-with open(filename) as csv_file:
-    csv_reader = csv.DictReader(csv_file)
-    rows = list()
+def driver():
+    with open(filename) as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        rows = list()
 
-    next(csv_reader)
-    for line in csv_reader:
-        if line and validate_fields(line):
-            rows.append(line)
+        next(csv_reader)
+        for line in csv_reader:
+            if line and validate_fields(line):
+                rows.append(line)
 
-    generate_json_file(rows)
-    generate_xml_file(rows)
+        generate_json_file(rows)
+        generate_xml_file(rows)
+
+
+if __name__ == '__main__':
+    print('CSV are being converted to JSON and XML.')
+    print('....')
+    driver()
+    print('hotels.json and hotels.xml file generated.')
