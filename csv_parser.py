@@ -42,14 +42,14 @@ def convert_row_to_xml(row):
 
 
 def generate_json_file(rows, cwd):
-    filepath = 'hotels.json'
-    with io.open(filepath, 'w', encoding='utf8') as f:
+    filepath = '/hotels.json'
+    with io.open(cwd + filepath, 'w', encoding='utf8') as f:
         json.dump(rows, f, ensure_ascii=False)
 
 
 def generate_xml_file(rows, cwd):
-    filepath = 'hotels.xml'
-    with io.open(filepath, 'w') as f:
+    filepath = '/hotels.xml'
+    with io.open(cwd + filepath, 'w') as f:
         f.write('<hotelListings>')
         for line in rows:
             f.write(convert_row_to_xml(line))
@@ -68,8 +68,8 @@ def driver():
                 if line and validate_fields(line):
                     rows.append(line)
 
-            generate_json_file(rows, cwd + '/data/')
-            generate_xml_file(rows, cwd + '/data/')
+            generate_json_file(rows, cwd + '/data')
+            generate_xml_file(rows, cwd + '/data')
 
 
 if __name__ == '__main__':

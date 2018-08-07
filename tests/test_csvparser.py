@@ -87,11 +87,11 @@ class TestParserMethods(unittest.TestCase):
     def test_generate_json_file_output(self):
         cwd = os.getcwd()
         csv_parser.generate_json_file(self.valid_data, cwd)
-        filename = 'hotels.json'
-        if os.path.isfile(filename):
-            with open(filename, 'r') as f:
+        filepath = 'hotels.json'
+        if os.path.isfile(filepath):
+            with open(filepath, 'r') as f:
                 output = f.read()
-        os.remove(filename)
+        os.remove(cwd + '\\' +filepath)
         self.assertMultiLineEqual(self.valid_json_file_output, output)
 
     def test_generate_xml_file_output(self):
