@@ -1,4 +1,5 @@
 import io
+import os
 import csv
 import json
 from validators.url import url
@@ -40,13 +41,15 @@ def convert_row_to_xml(row):
     </hotel>\n"""
 
 
-def generate_json_file(rows):
-    with io.open('hotels.json', 'w', encoding='utf8') as f:
+def generate_json_file(rows, cwd):
+    filepath = 'hotels.json'
+    with io.open(filepath, 'w', encoding='utf8') as f:
         json.dump(rows, f, ensure_ascii=False)
 
 
-def generate_xml_file(rows):
-    with io.open('hotels.xml', 'w') as f:
+def generate_xml_file(rows, cwd):
+    filepath = 'hotels.xml'
+    with io.open(filepath, 'w') as f:
         f.write('<hotelListings>')
         for line in rows:
             f.write(convert_row_to_xml(line))
@@ -54,17 +57,19 @@ def generate_xml_file(rows):
 
 
 def driver():
-    with open(filename) as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        rows = list()
+    cwd = os.getcwd()
+    if os.path.isfile(filename):
+        with open(filename) as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            rows = list()
 
-        next(csv_reader)
-        for line in csv_reader:
-            if line and validate_fields(line):
-                rows.append(line)
+            next(csv_reader)
+            for line in csv_reader:
+                if line and validate_fields(line):
+                    rows.append(line)
 
-        generate_json_file(rows)
-        generate_xml_file(rows)
+            generate_json_file(rows, cwd + '/data/')
+            generate_xml_file(rows, cwd + '/data/')
 
 
 if __name__ == '__main__':

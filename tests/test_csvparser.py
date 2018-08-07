@@ -1,7 +1,11 @@
 import sys
 sys.path.append("..")
 
+import os
+import io
+import json
 import csv_parser
+import tempfile
 import unittest
 from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import ParseError
@@ -35,6 +39,20 @@ class TestParserMethods(unittest.TestCase):
             "stars": 'random'
         }
 
+        self.new_json_file, self.json_file = tempfile.mkstemp()
+        with io.open(self.json_file, 'w', encoding='utf8') as f:
+            json.dump(self.valid_data, f, ensure_ascii=False)
+
+        with open(self.json_file, 'r') as f:
+            self.valid_json_file_output = f.read()
+
+        self.new_xml_file, self.xml_file = tempfile.mkstemp()
+        with io.open(self.xml_file, 'w') as f:
+            f.write(csv_parser.convert_row_to_xml(self.valid_data))
+
+        with open(self.xml_file, 'r') as f:
+            self.valid_xml_file_output = f.read()
+
     def test_is_valid_name(self):
         self.assertTrue(csv_parser.is_valid_name(self.valid_data))
 
@@ -65,6 +83,20 @@ class TestParserMethods(unittest.TestCase):
             parsed_xml = ET.fromstring(xml)
         except ParseError:
             self.assertTrue(False)
+
+    def test_generate_json_file_output(self):
+        cwd = os.getcwd()
+        csv_parser.generate_json_file(self.valid_data, cwd)
+        filename = 'hotels.json'
+        if os.path.isfile(filename):
+            with open(filename, 'r') as f:
+                output = f.read()
+        os.remove(filename)
+        self.assertMultiLineEqual(self.valid_json_file_output, output)
+
+    def test_generate_xml_file_output(self):
+        output = csv_parser.convert_row_to_xml(self.valid_data)
+        self.assertMultiLineEqual(self.valid_xml_file_output, output)
 
 
 if __name__ == '__main__':
